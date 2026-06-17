@@ -21,7 +21,7 @@ const VIDEO_TYPE = 'vimeo'; // 'html5' | 'vimeo' | 'youtube'
 
 const VIDEO_SRC = {
   html5: './usama-final.mp4',                       // Usama's actual showreel
-  vimeo: 'https://player.vimeo.com/video/1202140846?autoplay=1&color=ff0055&title=0&byline=0&portrait=0',
+  vimeo: 'https://player.vimeo.com/video/1202247441?autoplay=1&color=ff0055&title=0&byline=0&portrait=0',
   youtube: 'https://www.youtube-nocookie.com/embed/YOUR_ID?autoplay=1&rel=0&modestbranding=1',
 };
 
