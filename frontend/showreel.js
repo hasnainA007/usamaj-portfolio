@@ -17,19 +17,19 @@
 // Change VIDEO_TYPE to 'vimeo', 'youtube', or 'html5'
 // Then set VIDEO_SRC to the matching value below.
 
-const VIDEO_TYPE = 'html5'; // 'html5' | 'vimeo' | 'youtube'
+const VIDEO_TYPE = 'vimeo'; // 'html5' | 'vimeo' | 'youtube'
 
 const VIDEO_SRC = {
-  html5:   './usama-final.mp4',                       // Usama's actual showreel
-  vimeo:   'https://player.vimeo.com/video/YOUR_ID?autoplay=1&color=ff0055&title=0&byline=0&portrait=0',
+  html5: './usama-final.mp4',                       // Usama's actual showreel
+  vimeo: 'https://player.vimeo.com/video/1202140846?autoplay=1&color=ff0055&title=0&byline=0&portrait=0',
   youtube: 'https://www.youtube-nocookie.com/embed/YOUR_ID?autoplay=1&rel=0&modestbranding=1',
 };
 
 // ─── Three.js RAF Bridge ──────────────────────────────────────
 // This is populated by scene.js via registerThreeBridge()
 let _threeAnimationId = null;
-let _threeAnimateFn   = null;
-let _threePaused      = false;
+let _threeAnimateFn = null;
+let _threePaused = false;
 
 /**
  * Called once from scene.js to hand off the RAF control handle.
@@ -74,26 +74,26 @@ function buildModal() {
   let mediaEl;
   if (VIDEO_TYPE === 'html5') {
     mediaEl = document.createElement('video');
-    mediaEl.id      = 'showreel-video';
-    mediaEl.src     = VIDEO_SRC.html5;
-    mediaEl.controls    = true;
+    mediaEl.id = 'showreel-video';
+    mediaEl.src = VIDEO_SRC.html5;
+    mediaEl.controls = true;
     mediaEl.playsInline = true;
-    mediaEl.preload     = 'metadata';
+    mediaEl.preload = 'metadata';
   } else {
     // Vimeo or YouTube iframe
     mediaEl = document.createElement('iframe');
-    mediaEl.id              = 'showreel-iframe';
-    mediaEl.src             = '';                // populated on open
+    mediaEl.id = 'showreel-iframe';
+    mediaEl.src = '';                // populated on open
     mediaEl.allowFullscreen = true;
-    mediaEl.allow           = 'autoplay; fullscreen; picture-in-picture';
+    mediaEl.allow = 'autoplay; fullscreen; picture-in-picture';
     mediaEl.setAttribute('frameborder', '0');
     mediaEl.setAttribute('loading', 'lazy');
   }
 
   // ── Close button ──
   const closeBtn = document.createElement('button');
-  closeBtn.id          = 'showreel-close';
-  closeBtn.innerHTML   = `
+  closeBtn.id = 'showreel-close';
+  closeBtn.innerHTML = `
     <span class="sr-only">Close player</span>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -118,7 +118,7 @@ function buildModal() {
 
 function buildCTAButton() {
   const btn = document.createElement('button');
-  btn.id        = 'showreel-cta';
+  btn.id = 'showreel-cta';
   btn.className = 'showreel-cta';
   btn.innerHTML = `
     <span class="showreel-cta__ring" aria-hidden="true"></span>
@@ -135,22 +135,22 @@ function buildCTAButton() {
   const STRENGTH = 0.35;
   function onMouseMove(e) {
     const rect = btn.getBoundingClientRect();
-    const cx   = rect.left + rect.width  / 2;
-    const cy   = rect.top  + rect.height / 2;
-    const dx   = (e.clientX - cx) * STRENGTH;
-    const dy   = (e.clientY - cy) * STRENGTH;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) * STRENGTH;
+    const dy = (e.clientY - cy) * STRENGTH;
     btn.style.transform = `translate(${dx}px, ${dy}px) scale(1.04)`;
   }
   function onMouseLeave() {
     btn.style.transform = '';
   }
 
-  btn.addEventListener('mousemove',  onMouseMove);
+  btn.addEventListener('mousemove', onMouseMove);
   btn.addEventListener('mouseleave', onMouseLeave);
 
   // Cleanup stored so we can remove on destroy
   btn._cleanup = () => {
-    btn.removeEventListener('mousemove',  onMouseMove);
+    btn.removeEventListener('mousemove', onMouseMove);
     btn.removeEventListener('mouseleave', onMouseLeave);
   };
 
