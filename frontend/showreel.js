@@ -20,7 +20,7 @@
 const VIDEO_TYPE = 'html5'; // 'html5' | 'vimeo' | 'youtube'
 
 const VIDEO_SRC = {
-  html5:   './showreel.mp4',                          // local file in /frontend/
+  html5:   './usama-final.mp4',                       // Usama's actual showreel
   vimeo:   'https://player.vimeo.com/video/YOUR_ID?autoplay=1&color=ff0055&title=0&byline=0&portrait=0',
   youtube: 'https://www.youtube-nocookie.com/embed/YOUR_ID?autoplay=1&rel=0&modestbranding=1',
 };
