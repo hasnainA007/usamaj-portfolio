@@ -1,48 +1,29 @@
 import * as THREE from 'three';
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 /**
- * Integrates GSAP ScrollTrigger to fly the camera through the model
- * and accelerate the mesh's rotation on scroll.
+ * Integrates a simple scroll-reactive rotation on the TorusKnot.
  */
-export function initScrollAnimations(camera, mesh) {
-  const tl = gsap.timeline({
-    scrollTrigger: {
-      trigger: document.body,
-      start: "top top",
-      end: "+=200%",
-      scrub: 1
-    }
+function initScrollReaction(mesh) {
+  let scrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const delta = window.scrollY - scrollY;
+    scrollY = window.scrollY;
+    mesh.rotation.y += delta * 0.002;
+    mesh.rotation.x += delta * 0.001;
   });
-
-  // Fly camera through the center of the Torus Knot
-  tl.to(camera.position, {
-    z: -2,
-    ease: "power1.inOut",
-    onUpdate: () => {
-      camera.updateProjectionMatrix();
-    }
-  }, "start");
-
-  // Accelerate Torus Knot Y-axis rotation simultaneously
-  tl.to(mesh.rotation, {
-    y: Math.PI * 4, // Several extra continuous spins
-    ease: "power1.inOut"
-  }, "start");
 }
 
 /**
  * Initialize a fixed background Three.js scene with a scrolling-reactive TorusKnot mesh.
- * The canvas stays fixed behind all HTML content as the user scrolls.
+ *
+ * @returns {{ pause: () => void, resume: () => void }}
+ *   A bridge object that showreel.js uses to pause/resume the RAF loop.
  */
 export function initThreeScene() {
   // ========== CSS Injection ==========
   const style = document.createElement('style');
   style.textContent = `
-    canvas {
+    canvas#bg {
       position: fixed;
       top: 0;
       left: 0;
@@ -56,74 +37,81 @@ export function initThreeScene() {
   document.head.appendChild(style);
 
   // ========== Scene Setup ==========
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  const renderer = new THREE.WebGLRenderer({ 
-    antialias: true, 
-    alpha: true 
+  const scene    = new THREE.Scene();
+  const camera   = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({
+    canvas:    document.getElementById('bg'),
+    antialias: true,
+    alpha:     true,
   });
 
-  // Configure renderer
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  document.body.appendChild(renderer.domElement);
 
-  // Set camera position
   camera.position.z = 5;
 
   // ========== Mesh: TorusKnot ==========
   const geometry = new THREE.TorusKnotGeometry(2, 0.8, 100, 16);
   const material = new THREE.MeshStandardMaterial({
     wireframe: true,
-    color: 0x00ffcc,
-    emissive: 0x00aa88,
+    color:     0x00ffcc,
+    emissive:  0x00aa88,
     roughness: 0.8,
-    metalness: 0.2
+    metalness: 0.2,
   });
   const torusKnot = new THREE.Mesh(geometry, material);
   scene.add(torusKnot);
 
   // ========== Lighting ==========
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  scene.add(ambientLight);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  dirLight.position.set(5, 5, 5);
+  scene.add(dirLight);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  directionalLight.position.set(5, 5, 5);
-  scene.add(directionalLight);
-
-  // ========== Window Resize Handler ==========
-  const handleResize = () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    camera.aspect = width / height;
+  // ========== Resize Handler ==========
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  });
 
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
-  };
+  // ========== Scroll Reaction ==========
+  initScrollReaction(torusKnot);
 
-  window.addEventListener('resize', handleResize);
+  // ========== Pauseable Animation Loop ==========
+  let _rafId   = null;
+  let _running = false;
 
-  // ========== Animation Loop ==========
-  const animate = () => {
-    requestAnimationFrame(animate);
+  function animate() {
+    if (!_running) return;
 
-    // Subtle continuous rotation (baseline)
+    _rafId = requestAnimationFrame(animate);
+
     torusKnot.rotation.x += 0.002;
     torusKnot.rotation.y += 0.002;
 
     renderer.render(scene, camera);
-  };
+  }
 
-  // Bind GSAP Scroll Animations automatically
-  initScrollAnimations(camera, torusKnot);
+  function pause() {
+    _running = false;
+    if (_rafId !== null) {
+      cancelAnimationFrame(_rafId);
+      _rafId = null;
+    }
+  }
 
-  animate();
+  function resume() {
+    if (_running) return; // already running — don't double-start
+    _running = true;
+    animate();
+  }
+
+  // Start the loop
+  resume();
+
+  // Return RAF bridge for showreel.js
+  return { pause, resume };
 }

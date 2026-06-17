@@ -1,9 +1,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { initThreeScene } from './scene.js';
+import { initShowreel, registerThreeBridge } from './showreel.js';
 
-// Initialize the fixed 3D background scene
-initThreeScene();
+// ── Initialize 3D background and capture the RAF bridge ──────
+const threeBridge = initThreeScene();
+
+// ── Hand the bridge to showreel so it can pause/resume Three ──
+registerThreeBridge(threeBridge);
+
+// ── Boot the cinematic showreel modal + CTA button ────────────
+initShowreel();
 
 
 // --- BACKEND INTEGRATION ---
@@ -14,7 +21,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 function initCard3D(container, cardElement) {
     const scene = new THREE.Scene();
     
-    // Style container for mini viewport
     container.style.position = 'relative';
     container.style.height = '150px';
     container.style.width = '100%';
@@ -23,19 +29,16 @@ function initCard3D(container, cardElement) {
     const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 100);
     camera.position.set(0, 3, 5);
 
-    // Separate renderer per card
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     
-    // Add OrbitControls so users can rotate the project elements interactively!
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = false; // Prevent zoom from interfering with page scroll
-    controls.enableDamping = true; // Adds physical inertia to spinning
+    controls.enableZoom = false;
+    controls.enableDamping = true;
     controls.dampingFactor = 0.05;
 
-    // Film canister geometry (cylinder)
     const geometry = new THREE.CylinderGeometry(1.2, 1.2, 0.4, 32);
     const material = new THREE.MeshStandardMaterial({ 
         color: 0x888888, 
@@ -46,7 +49,6 @@ function initCard3D(container, cardElement) {
     canister.rotation.x = Math.PI / 4;
     scene.add(canister);
 
-    // Lighting setup for the canister
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(2, 5, 2);
@@ -59,15 +61,11 @@ function initCard3D(container, cardElement) {
     let isVisible = false;
     let animationId;
 
-    // IntersectionObserver to pause rendering when the card is off-screen
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             isVisible = entry.isIntersecting;
-            if (isVisible) {
-                animate();
-            } else {
-                cancelAnimationFrame(animationId);
-            }
+            if (isVisible) { animate(); }
+            else { cancelAnimationFrame(animationId); }
         });
     });
     observer.observe(container);
@@ -75,12 +73,7 @@ function initCard3D(container, cardElement) {
     function animate() {
         if (!isVisible) return;
         animationId = requestAnimationFrame(animate);
-
-        // Allow OrbitControls to process physical inertia
         controls.update();
-
-        // Give it a slightly slower idle rotation if not hovered
-        // On hover: spin faster and change color to the accent pink
         if (isHovered) {
             canister.rotation.y += 0.05;
             material.color.setHex(0xff0055);
@@ -89,11 +82,9 @@ function initCard3D(container, cardElement) {
             canister.rotation.z += 0.002;
             material.color.setHex(0x888888);
         }
-
         renderer.render(scene, camera);
     }
 
-    // Keep mini-canvas responsive when the card resizes
     const resizeObserver = new ResizeObserver(() => {
         if (container.clientWidth === 0 || container.clientHeight === 0) return;
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -116,7 +107,7 @@ async function fetchProjects() {
             return;
         }
 
-        projectsGrid.innerHTML = ''; // clear loading text
+        projectsGrid.innerHTML = '';
         projects.forEach(project => {
             const card = document.createElement('div');
             card.className = 'project-card';
@@ -128,7 +119,6 @@ async function fetchProjects() {
             `;
             projectsGrid.appendChild(card);
 
-            // Initialize the 3D scene inside the new viewport
             const viewport = card.querySelector('.card-3d-viewport');
             initCard3D(viewport, card);
         });
@@ -143,10 +133,10 @@ async function fetchProjects() {
 document.getElementById('contact-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    const statusText = document.getElementById('form-status');
+    const name        = document.getElementById('name').value;
+    const email       = document.getElementById('email').value;
+    const message     = document.getElementById('message').value;
+    const statusText  = document.getElementById('form-status');
 
     try {
         const response = await fetch(`${API_URL}/contact`, {
@@ -168,7 +158,4 @@ document.getElementById('contact-form').addEventListener('submit', async (e) => 
     }
 });
 
-// Initialize fetching
 fetchProjects();
-
-initThreeScene();
