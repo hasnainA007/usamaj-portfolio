@@ -1,87 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Usama Javed | 3D Portfolio</title>
-    <link rel="stylesheet" href="./style.css">
-  </head>
-  <body>
-    <div id="app">
-      <nav>
-        <div class="logo">UJ.</div>
-        <ul>
-          <li><a href="#home">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
 
-      <!-- Three.js Canvas Container -->
-      <canvas id="bg"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Usama Javed | 3D Portfolio</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
 
-      <main>
-        <section id="home">
+<body>
+  <div id="app">
+    <nav>
+      <div class="logo">UJ.</div>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- Three.js Canvas Container -->
+    <canvas id="bg"></canvas>
+
+    <main>
+      <section id="home">
+
+        <div class="hero-content">
           <h1>Usama Javed</h1>
           <p>Filmmaker | Visual Storyteller | Cinematographer</p>
           <a class="btn" href="#projects">View My Work</a>
-        </section>
-
-        <section id="about">
-          <h2>About Me</h2>
-          <p>I’m a filmmaker driven by visual narratives to inspire, inform, and impact. With hands-on experience across cinematography, and post-production, I specialize in crafting compelling films from concept to final cut.</p>
-          
-          <div class="skills">
-            <h3>Experience</h3>
-            <ul>
-              <li><strong>CEO</strong> @ sceneproduction (2025-present)</li>
-              <li><strong>Editor</strong> @ ICNA Institute (2025-2025)</li>
-              <li><strong>Media Head</strong> @ WDD (2020-present)</li>
-              <li><strong>Cinematographer/Editor</strong> @ B2 Production house</li>
-            </ul>
-          </div>
-          
-          <div class="skills">
-            <h3>Education</h3>
-            <ul>
-              <li>Bachelors in Theater, Films & television - Beaconhouse National University (2023-2026)</li>
-            </ul>
-          </div>
-        </section>
-
-        <section id="projects">
-          <h2>My Projects</h2>
-          <div id="projects-grid" class="projects-grid">
-            <!-- Projects will be dynamically loaded here from backend -->
-            <p>Loading projects...</p>
-          </div>
-        </section>
-
-        <section id="contact">
-          <h2>Contact Me</h2>
-          <p>Email: usamaj4145@gmail.com | Phone: (+92) 3024145739</p>
-          <form id="contact-form">
-            <input type="text" id="name" placeholder="Your Name" required />
-            <input type="email" id="email" placeholder="Your Email" required />
-            <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
-            <button type="submit" class="btn">Send Message</button>
-          </form>
-          <p id="form-status"></p>
-        </section>
-      </main>
-
-      <footer>
-        <div class="footer-content">
-          <p>&copy; 2026 Usama Javed. Filmmaker & Visual Storyteller.</p>
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/usamaj" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href="https://fb.com/usamaj" target="_blank" rel="noopener noreferrer">Facebook</a>
-          </div>
         </div>
-      </footer>
-    </div>
-    <script type="module" src="./main.js"></script>
-  </body>
+
+        <div id="hero3d"></div>
+
+
+      </section>
+
+      <section id="about">
+        <h2>About Me</h2>
+        <p>I’m a filmmaker driven by visual narratives to inspire, inform, and impact. With hands-on experience across
+          cinematography, and post-production, I specialize in crafting compelling films from concept to final cut.</p>
+
+        <div class="skills">
+          <h3>Experience</h3>
+          <ul>
+            <li><strong>CEO</strong> @ sceneproduction (2025-present)</li>
+            <li><strong>Editor</strong> @ ICNA Institute (2025-2025)</li>
+            <li><strong>Media Head</strong> @ WDD (2020-present)</li>
+            <li><strong>Cinematographer/Editor</strong> @ B2 Production house</li>
+          </ul>
+        </div>
+
+        <div class="skills">
+          <h3>Education</h3>
+          <ul>
+            <li>Bachelors in Theater, Films & television - Beaconhouse National University (2023-2026)</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="projects">
+        <h2>My Projects</h2>
+        <div id="projects-grid" class="projects-grid">
+          <!-- Projects will be dynamically loaded here from backend -->
+          <p>Loading projects...</p>
+        </div>
+      </section>
+
+      <section id="contact">
+        <h2>Contact Me</h2>
+        <p>Email: usamaj4145@gmail.com | Phone: (+92) 3024145739</p>
+        <form id="contact-form">
+          <input type="text" id="name" placeholder="Your Name" required />
+          <input type="email" id="email" placeholder="Your Email" required />
+          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+          <button type="submit" class="btn">Send Message</button>
+        </form>
+        <p id="form-status"></p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2026 Usama Javed. Filmmaker & Visual Storyteller.</p>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/usama-j-a023b4344/" target="_blank"
+            rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://www.facebook.com/share/18fpYXDequ/" target="_blank" rel="noopener noreferrer">Facebook</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script type="module" src="./main.js"></script>
+</body>
+
 </html>
